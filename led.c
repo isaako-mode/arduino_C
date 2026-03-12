@@ -1,49 +1,41 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
-/* void IOSetDir(volatile uint8_t *ddr, uint8_t pin, uint8_t mode) { */
-
-/*   if(mode) { */
-/*     *ddr |= (1 << pin); */
-/*   } */
-/*   else { */
-/*     *ddr &= ~(1 << pin); */
-/*   } */
-/* } */
-
 int main(void) {
 
   /* PINS:
+
+     LEDs:
+     
      PB0
      PB1
      PB2
      PB3
+
+     BUTTON:
+     PD4
    */
 
-  /* IOSetDir((volatile uint8_t*)_SFR_MEM_ADDR(DDRB), PB0, 1); */
-  /* IOSetDir((volatile uint8_t*)_SFR_MEM_ADDR(DDRB), PB1, 1); */
-  /* IOSetDir((volatile uint8_t*)_SFR_MEM_ADDR(DDRB), PB2, 1); */
-  /* IOSetDir((volatile uint8_t*)_SFR_MEM_ADDR(DDRB), PB3, 1); */
   
-  // Goal: toggle pin 8x
   // Set direction register output
    DDRB = DDRB | (1 << PB0);
    DDRB = DDRB | (1 << PB1);
    DDRB = DDRB | (1 << PB2);
    DDRB = DDRB | (1 << PB3);
 
-   // set direction register input
+   // Set direction register input
    DDRD = DDRD & ~(1 << PD4);
    
-  // turn pin 8 ON
+   // Read to track if the button is pressed
    int read = 0x00;
    
   while(1) {
+    
     read = PIND & (1 << PD4);
     
     if(read) {
 
-      //turn on all pins
+      //turn on all pins when button is pressed
       PORTB |= (1 << PB0);      
       PORTB |= (1 << PB1);      
       PORTB |= (1 << PB2);
@@ -52,7 +44,7 @@ int main(void) {
       continue;
     }
     
-    // toggle the pin
+    // Turn on the LEDs one by on
     PORTB |= (1 << PB0);
     _delay_ms(100);
     PORTB |= (1 << PB1);
@@ -61,8 +53,8 @@ int main(void) {
     _delay_ms(100);
     PORTB |= (1 << PB3);
     _delay_ms(100);
-    //PORTB ^= (1 << PB0);
 
+    // Turn on the LEDs one by on
     PORTB &= ~(1 << PB0);
      _delay_ms(100);
     PORTB &= ~(1 << PB1);
@@ -71,6 +63,7 @@ int main(void) {
      _delay_ms(100);
     PORTB &= ~(1 << PB3);
 
+    // Turn off the LEDs one by one going the opposite way
     _delay_ms(100);
     PORTB |= (1 << PB3);
     _delay_ms(100);
@@ -80,7 +73,7 @@ int main(void) {
     _delay_ms(100);
     PORTB |= (1 << PB0);
 
-
+    // Turn on the LEDs one by on
     _delay_ms(100);
     PORTB &= ~(1 << PB3);
     _delay_ms(100);
