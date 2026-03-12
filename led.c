@@ -32,25 +32,65 @@ int main(void) {
    DDRB = DDRB | (1 << PB2);
    DDRB = DDRB | (1 << PB3);
 
+   // set direction register input
+   DDRD = DDRD & ~(1 << PD4);
+   
   // turn pin 8 ON
-    
+   int read = 0x00;
+   
   while(1) {
+    read = PIND & (1 << PD4);
+    
+    if(read) {
+
+      //turn on all pins
+      PORTB |= (1 << PB0);      
+      PORTB |= (1 << PB1);      
+      PORTB |= (1 << PB2);
+      PORTB |= (1 << PB3);
+
+      continue;
+    }
+    
     // toggle the pin
     PORTB |= (1 << PB0);
-    _delay_ms(200);
+    _delay_ms(100);
     PORTB |= (1 << PB1);
-    _delay_ms(200);
+    _delay_ms(100);
     PORTB |= (1 << PB2);
-    _delay_ms(200);
+    _delay_ms(100);
     PORTB |= (1 << PB3);
-    _delay_ms(200);
+    _delay_ms(100);
     //PORTB ^= (1 << PB0);
 
     PORTB &= ~(1 << PB0);
+     _delay_ms(100);
     PORTB &= ~(1 << PB1);
+     _delay_ms(100);
     PORTB &= ~(1 << PB2);
+     _delay_ms(100);
     PORTB &= ~(1 << PB3);
-    _delay_ms(200);
+
+    _delay_ms(100);
+    PORTB |= (1 << PB3);
+    _delay_ms(100);
+    PORTB |= (1 << PB2);
+    _delay_ms(100);
+    PORTB |= (1 << PB1);
+    _delay_ms(100);
+    PORTB |= (1 << PB0);
+
+
+    _delay_ms(100);
+    PORTB &= ~(1 << PB3);
+    _delay_ms(100);
+    PORTB &= ~(1 << PB2);
+    _delay_ms(100);
+    PORTB &= ~(1 << PB1);
+    _delay_ms(100);
+    PORTB &= ~(1 << PB0);
+    _delay_ms(100);
+
     
    }
   
