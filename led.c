@@ -23,14 +23,28 @@ int main(void) {
 
    // Set direction register input
   DDRD = DDRD & ~(1 << PD4);
-   
+
+  srand(TCNT0);
+  
+  uint8_t target_index = rand() % 4;   // random LED index
+  uint8_t target_mask  = 1 << target_index;
+
+  // show goal pin
+  for(int i=0; i<3; i++) {
+    PORTB |= target_mask;
+    _delay_ms(500);
+    PORTB &= ~target_mask;
+    _delay_ms(500);
+
+  }
+  
    // Read to track if the button is pressed
   uint8_t read = 0x00;
   uint8_t is_pressed = 0;
   uint8_t direction = 0;
 
   PORTB |= (1 << PB0);
-
+  
   while(1) {
     _delay_ms(50);
     read = PIND & (1 << PD4);
@@ -39,19 +53,28 @@ int main(void) {
       is_pressed = 1;
     }
 
-    _delay_ms(500);
+    _delay_ms(50);
 
     //Blink 3 times when button is pressed
     if(is_pressed) {
-      
-      for(int i=0; i<3; i++) {
+
+      if (PORTB == target_mask) {
+	for(int i=0; i<3; i++) {
 	PORTB = 0x0F;
 	_delay_ms(500);
 
 	PORTB = 0x00;
        _delay_ms(500);
+	}
+
       }
 
+      else {
+	_delay_ms(2000);
+
+	PORTB = 0x00;
+      }
+      
       PORTB = 0x01;
     }
 
