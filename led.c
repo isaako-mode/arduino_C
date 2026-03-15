@@ -1,5 +1,6 @@
 #include <avr/io.h>
 #include <util/delay.h>
+#include <stdlib.h>
 
 int main(void) {
 
@@ -26,10 +27,12 @@ int main(void) {
    // Read to track if the button is pressed
   uint8_t read = 0x00;
   uint8_t is_pressed = 0;
-  uint8_t led_dir = 0;
-  
+  uint8_t direction = 0;
+
+  PORTB |= (1 << PB0);
+
   while(1) {
-    _delay_ms(500);
+    _delay_ms(50);
     read = PIND & (1 << PD4);
 
     if(read) {
@@ -38,44 +41,37 @@ int main(void) {
 
     _delay_ms(500);
 
+    //Blink 3 times when button is pressed
     if(is_pressed) {
-      PORTB = 0X0F;
-      _delay_ms(500);
       
-      PORTB = 0X00;
-      _delay_ms(500);
+      for(int i=0; i<3; i++) {
+	PORTB = 0x0F;
+	_delay_ms(500);
 
-      PORTB = 0X0F;
-      _delay_ms(500);
+	PORTB = 0x00;
+       _delay_ms(500);
+      }
 
-      PORTB = 0X00;
-      _delay_ms(500);
-
-      PORTB = 0X0F;
-      _delay_ms(500);
-
-      PORTB = 0X00;
-      _delay_ms(500);
+      PORTB = 0x01;
     }
 
-    if(PORTB == 0X00) {
-      PORTB = 0X01;
+    if (PORTB == 0x08) {
+      direction = 0;
     }
+
     
-    if(PORTB == 0x01) {
-      led_dir = 0;
+    if (PORTB == 0x01) {
+      direction = 1;
     }
 
-    if(PORTB == 0x08) {
-      led_dir = 1;
-    }
 
-    if(led_dir == 0) {
-      PORTB *= 2;
+    if(direction) {
+      
+      PORTB <<= 1;
     }
-
-    if(led_dir == 1 && PORTB != 0X01) {
-      PORTB /= 2;
+    else {
+      
+      PORTB >>= 1;
     }
 
     is_pressed = 0;
