@@ -1,0 +1,13 @@
+
+TODO 3/15/26
+
+* Features to add:
+** Refactor with interrupts
+*** Button push should be handled by interrupts
+**  Make a timeout
+*** If the user takes too long to press the button, timeout and automatically take the c rrent pin
+*** Implemented with interrupt
+** Random number generator
+*** instead of using the C random library, take the timer register, take the modulo with 4 (number of pins), then set that to the taget pin which will (should) in effect, be a random number
+
+	 
