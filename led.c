@@ -18,74 +18,69 @@ int main(void) {
 
   
   // Set direction register output
-   DDRB = DDRB | (1 << PB0);
-   DDRB = DDRB | (1 << PB1);
-   DDRB = DDRB | (1 << PB2);
-   DDRB = DDRB | (1 << PB3);
+  DDRB = 0x0F;
 
    // Set direction register input
-   DDRD = DDRD & ~(1 << PD4);
+  DDRD = DDRD & ~(1 << PD4);
    
    // Read to track if the button is pressed
-   int read = 0x00;
-   
+  uint8_t read = 0x00;
+  uint8_t is_pressed = 0;
+  uint8_t led_dir = 0;
+  
   while(1) {
-    
+    _delay_ms(500);
     read = PIND & (1 << PD4);
-    
+
     if(read) {
+      is_pressed = 1;
+    }
 
-      //turn on all pins when button is pressed
-      PORTB |= (1 << PB0);      
-      PORTB |= (1 << PB1);      
-      PORTB |= (1 << PB2);
-      PORTB |= (1 << PB3);
+    _delay_ms(500);
 
-      continue;
+    if(is_pressed) {
+      PORTB = 0X0F;
+      _delay_ms(500);
+      
+      PORTB = 0X00;
+      _delay_ms(500);
+
+      PORTB = 0X0F;
+      _delay_ms(500);
+
+      PORTB = 0X00;
+      _delay_ms(500);
+
+      PORTB = 0X0F;
+      _delay_ms(500);
+
+      PORTB = 0X00;
+      _delay_ms(500);
+    }
+
+    if(PORTB == 0X00) {
+      PORTB = 0X01;
     }
     
-    // Turn on the LEDs one by on
-    PORTB |= (1 << PB0);
-    _delay_ms(100);
-    PORTB |= (1 << PB1);
-    _delay_ms(100);
-    PORTB |= (1 << PB2);
-    _delay_ms(100);
-    PORTB |= (1 << PB3);
-    _delay_ms(100);
+    if(PORTB == 0x01) {
+      led_dir = 0;
+    }
 
-    // Turn on the LEDs one by on
-    PORTB &= ~(1 << PB0);
-     _delay_ms(100);
-    PORTB &= ~(1 << PB1);
-     _delay_ms(100);
-    PORTB &= ~(1 << PB2);
-     _delay_ms(100);
-    PORTB &= ~(1 << PB3);
+    if(PORTB == 0x08) {
+      led_dir = 1;
+    }
 
-    // Turn off the LEDs one by one going the opposite way
-    _delay_ms(100);
-    PORTB |= (1 << PB3);
-    _delay_ms(100);
-    PORTB |= (1 << PB2);
-    _delay_ms(100);
-    PORTB |= (1 << PB1);
-    _delay_ms(100);
-    PORTB |= (1 << PB0);
+    if(led_dir == 0) {
+      PORTB *= 2;
+    }
 
-    // Turn on the LEDs one by on
-    _delay_ms(100);
-    PORTB &= ~(1 << PB3);
-    _delay_ms(100);
-    PORTB &= ~(1 << PB2);
-    _delay_ms(100);
-    PORTB &= ~(1 << PB1);
-    _delay_ms(100);
-    PORTB &= ~(1 << PB0);
-    _delay_ms(100);
+    if(led_dir == 1 && PORTB != 0X01) {
+      PORTB /= 2;
+    }
 
-    
-   }
+    is_pressed = 0;
+
+  }
   
 }
 
